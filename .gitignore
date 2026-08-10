@@ -1,0 +1,52 @@
+# ── Rust ──────────────────────────────────────────────────────────────────────
+/target/
+Cargo.lock.bak
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+.env
+
+# ── Coverage / test artefacts ─────────────────────────────────────────────────
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/
+
+# ── Node / Frontend ───────────────────────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── IDE / OS ──────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Secrets / keys ────────────────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.pfx
+.env.local
+.env.*.local
+
+# ── Maturin / PyO3 wheels ─────────────────────────────────────────────────────
+target/wheels/
+
+# ── Stray pip artefacts ───────────────────────────────────────────────────────
+=*
