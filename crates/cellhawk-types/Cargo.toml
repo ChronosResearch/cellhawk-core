@@ -1,0 +1,13 @@
+[package]
+name        = "cellhawk-types"
+description = "Shared domain types for the CellHawk navigation stack"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+license.workspace    = true
+repository.workspace = true
+
+[dependencies]
+nalgebra  = { workspace = true }
+serde     = { workspace = true }
+thiserror = { workspace = true }

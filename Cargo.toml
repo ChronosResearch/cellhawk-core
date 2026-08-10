@@ -1,0 +1,44 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/cellhawk-types",
+    "crates/cellhawk-ekf",
+    "crates/cellhawk-rssi",
+    "crates/cellhawk-sdr",
+    "crates/cellhawk-pyo3",
+]
+
+[workspace.package]
+version     = "0.1.0"
+edition     = "2021"
+authors     = ["Shashank Kumar <shashankchoudhary792@gmail.com>"]
+license     = "MIT"
+repository  = "https://github.com/shashank-cellhawk/cellhawk-core"
+rust-version = "1.78"
+
+[workspace.dependencies]
+# Linear algebra — zero-allocation, SIMD-friendly matrix ops
+nalgebra   = { version = "0.33", features = ["serde-serialize"] }
+# Serialization
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Error handling
+thiserror  = "1"
+anyhow     = "1"
+# Logging
+tracing    = "0.1"
+# Python bindings (enabled per-crate via optional feature flag in each crate)
+pyo3       = { version = "0.21", features = ["extension-module"] }
+# Testing
+approx     = "0.5"
+criterion  = { version = "0.5", features = ["html_reports"] }
+
+[profile.release]
+opt-level   = 3
+lto         = "fat"
+codegen-units = 1
+panic       = "abort"
+
+[profile.bench]
+inherits    = "release"
+debug       = true

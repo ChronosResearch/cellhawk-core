@@ -1,0 +1,28 @@
+[package]
+name        = "cellhawk-pyo3"
+description = "PyO3 Python bindings for the CellHawk EKF — exposes CellHawkEkf to Python"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+license.workspace    = true
+repository.workspace = true
+
+# cdylib  → Python extension (.so / .pyd)
+# rlib    → allows `cargo test` to work without maturin
+[lib]
+name       = "cellhawk_pyo3"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+cellhawk-ekf   = { path = "../cellhawk-ekf" }
+cellhawk-types = { path = "../cellhawk-types" }
+pyo3           = { workspace = true }
+nalgebra       = { workspace = true }
+
+[dev-dependencies]
+approx = { workspace = true }
+
+# maturin reads this section for Python metadata
+[package.metadata.maturin]
+python-source = "python"
+module-name   = "cellhawk_pyo3"

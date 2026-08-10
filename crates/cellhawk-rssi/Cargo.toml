@@ -1,0 +1,19 @@
+[package]
+name        = "cellhawk-rssi"
+description = "LDPL path-loss model, WLS multilateration, RANSAC outlier rejection, Rician fading"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+license.workspace    = true
+repository.workspace = true
+
+[dependencies]
+cellhawk-types = { path = "../cellhawk-types" }
+nalgebra       = { workspace = true }
+serde          = { workspace = true }
+thiserror      = { workspace = true }
+anyhow         = { workspace = true }
+tracing        = { workspace = true }
+
+[dev-dependencies]
+approx = { workspace = true }

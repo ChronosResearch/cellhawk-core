@@ -1,0 +1,119 @@
+// CellHawk Telemetry Protocol Buffers Schema
+// Encodes all real-time telemetry between edge workers and GCS.
+// Reference: §2.2 (sub-50 ms glass-to-glass latency, Protobuf-encoded)
+
+syntax = "proto3";
+package cellhawk.telemetry;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Enumerations
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum NavigationTier {
+  TIER_UNSPECIFIED  = 0;
+  TIER_GNSS_ACTIVE  = 1;  // JNR < 6 dB
+  TIER_CELLULAR     = 2;  // 6 ≤ JNR < 19 dB
+  TIER_VISUAL_SLAM  = 3;  // JNR ≥ 19 dB
+}
+
+enum ThreatType {
+  THREAT_UNSPECIFIED      = 0;
+  THREAT_RF_JAMMING       = 1;
+  THREAT_GPS_SPOOFING     = 2;
+  THREAT_HUNTER_DRONE     = 3;
+  THREAT_OBSTACLE         = 4;
+  THREAT_COMMS_DEGRADED   = 5;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Core Position Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+message EnuPosition {
+  double east_m  = 1;
+  double north_m = 2;
+  double up_m    = 3;
+}
+
+message Velocity {
+  double east_m_s  = 1;
+  double north_m_s = 2;
+  double up_m_s    = 3;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Navigation State Telemetry (10 Hz from edge worker)
+// ─────────────────────────────────────────────────────────────────────────────
+
+message NavigationStateTelemetry {
+  uint32          drone_id            = 1;
+  double          timestamp_s         = 2;
+  EnuPosition     position            = 3;
+  Velocity        velocity            = 4;
+  double          heading_rad         = 5;
+  double          jnr_db              = 6;
+  NavigationTier  active_tier         = 7;
+  double          rms_position_error_m = 8;
+  double          battery_voltage_v   = 9;
+  double          baro_altitude_m     = 10;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Danger Grid Broadcast (§6.1)
+// ─────────────────────────────────────────────────────────────────────────────
+
+message DangerGridBroadcast {
+  uint32      drone_id    = 1;
+  double      timestamp_s = 2;
+  EnuPosition position    = 3;
+  double      severity    = 4;  // [0.0, 1.0]
+  ThreatType  threat_type = 5;
+  double      ttl_s       = 6;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CORTEX Neural Heatmap Frame (§4.5)
+// ─────────────────────────────────────────────────────────────────────────────
+
+message HeatmapFrame {
+  uint32          drone_id       = 1;
+  double          timestamp_s    = 2;
+  // Flattened grid of activation magnitudes (row-major)
+  repeated float  activations    = 3;
+  uint32          grid_width     = 4;
+  uint32          grid_height    = 5;
+  double          grid_origin_east_m  = 6;
+  double          grid_origin_north_m = 7;
+  double          cell_size_m    = 8;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mission Command (GCS → Edge)
+// ─────────────────────────────────────────────────────────────────────────────
+
+message WaypointCommand {
+  uint32      drone_id       = 1;
+  double      timestamp_s    = 2;
+  EnuPosition target         = 3;
+  double      target_speed_m_s = 4;
+  double      target_altitude_m = 5;
+  // Cryptographic nonce for replay protection (§8)
+  bytes       nonce_96bit    = 6;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// System Health Report
+// ─────────────────────────────────────────────────────────────────────────────
+
+message SystemHealthReport {
+  uint32  drone_id              = 1;
+  double  timestamp_s           = 2;
+  bool    gnss_healthy          = 3;
+  bool    cellular_healthy      = 4;
+  bool    slam_healthy          = 5;
+  bool    imu_healthy           = 6;
+  uint32  visible_towers        = 7;
+  double  cellular_gdop         = 8;
+  bool    spoofing_suspected    = 9;
+  double  uptime_s              = 10;
+}

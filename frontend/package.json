@@ -1,0 +1,29 @@
+{
+  "name": "cellhawk-digital-twin",
+  "version": "0.1.0",
+  "description": "CellHawk Digital Twin — MapLibre GL JS + Three.js live drone visualisation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev":   "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test":  "vitest run",
+    "test:watch": "vitest",
+    "lint":  "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "maplibre-gl": "^4.3.2",
+    "three": "^0.165.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.165.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "jsdom": "^24.1.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vitest": "^1.6.0"
+  }
+}

@@ -1,0 +1,24 @@
+[package]
+name        = "cellhawk-ekf"
+description = "Extended Kalman Filter with JNR-based dynamic covariance scaling and tier arbitration"
+version.workspace    = true
+edition.workspace    = true
+authors.workspace    = true
+license.workspace    = true
+repository.workspace = true
+
+[dependencies]
+cellhawk-types = { path = "../cellhawk-types" }
+nalgebra       = { workspace = true }
+serde          = { workspace = true }
+thiserror      = { workspace = true }
+anyhow         = { workspace = true }
+tracing        = { workspace = true }
+
+[dev-dependencies]
+approx     = { workspace = true }
+criterion  = { workspace = true }
+
+[[bench]]
+name    = "handover"
+harness = false

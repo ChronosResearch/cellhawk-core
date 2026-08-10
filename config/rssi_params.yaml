@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CellHawk RSSI / LDPL Parameters
+# Reference: §3.1, §3.2, §3.3, Appendix A.6, A.7
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Log-Distance Path Loss model (§3.1)
+ldpl:
+  # Reference distance d₀ (m) — calibration point
+  reference_distance_m: 1.0
+
+  # Transmit power at d₀ (dBm) — calibrated value from paper
+  tx_power_at_reference_dbm: -40.0
+
+  # Default path loss exponent (mixed urban/suburban)
+  default_path_loss_exponent: 2.8
+
+  # Per-environment exponent table (ITU-R P.1411, §3.1)
+  environment_exponents:
+    free_space:    2.0
+    urban_macro:   3.2
+    urban_micro:   2.5
+    dense_urban:   3.5
+    indoor:        2.5
+
+  # Log-normal shadowing standard deviation (dB) — typical urban range
+  shadowing_std_db: 7.0   # midpoint of 4–10 dB range
+
+  # Bayesian online exponent estimator
+  adaptive_exponent:
+    enabled: true
+    learning_rate: 0.05       # step size for gradient update
+    min_exponent: 1.8
+    max_exponent: 4.5
+    window_size: 20           # number of recent residuals to track
+
+# Multilateration solver (§3.2)
+multilateration:
+  # Minimum towers required for a 2-D fix
+  min_towers: 3
+
+  # Preferred minimum for redundancy + RANSAC
+  preferred_towers: 4
+
+  # Maximum usable range per tower (m) — LTE sensitivity limit
+  max_range_m: 1200.0
+
+  # RANSAC parameters
+  ransac:
+    enabled: true
+    max_iterations: 50
+    inlier_threshold_m: 30.0   # residual below which a tower is an inlier
+    min_inlier_fraction: 0.6   # require 60% inliers for a valid solution
+
+  # TRF solver convergence
+  trf:
+    max_iterations: 50
+    function_tolerance: 1e-8
+    gradient_tolerance: 1e-8
+
+  # Weighting: w_i ∝ 1/d_i² (§3.2)
+  distance_weighting_exponent: 2.0
+
+# Rician fading model (§3.3, Appendix A.6)
+rician_fading:
+  # K-factor bounds (dB) used in simulation
+  k_factor_min_db: 3.0    # severe NLoS (urban canyon)
+  k_factor_max_db: 12.0   # near-LoS
+
+  # NLoS additional path loss range (dB) — used for outlier detection
+  nlos_additional_loss_min_db: 20.0
+  nlos_additional_loss_max_db: 50.0
+
+# LTE receiver sensitivity (dBm) — determines max usable range
+lte_receiver_sensitivity_dbm: -110.0

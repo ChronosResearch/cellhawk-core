@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CORTEX v2.0 DQN Hyperparameters
+# Reference: §4.1, §4.2, §4.3, §4.4
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Network architecture (§4.1)
+network:
+  state_dim: 19           # 19-dimensional continuous state vector
+  hidden_layers: [64, 64] # Two FC layers, 64 neurons each (~10k params)
+  action_dim: 9           # Discrete navigational intent vectors
+
+# Training hyperparameters (§4.1, [7] Mnih et al. 2015)
+training:
+  learning_rate: 1e-4
+  gamma: 0.99             # Discount factor
+  epsilon_start: 1.0      # ε-greedy exploration start
+  epsilon_end: 0.05
+  epsilon_decay_steps: 50000
+  batch_size: 64
+  replay_buffer_size: 100000
+  target_update_freq: 1000  # Hard update every N steps
+  convergence_episode: 700  # Expected convergence (§5.3)
+
+# Control hierarchy (§4.2)
+control:
+  dqn_frequency_hz: 10    # High-level intent generation
+  pid_frequency_hz: 400   # Attitude controller
+  attitude_frequency_hz: 50
+
+# Auto-curriculum scheduler (§4.3)
+curriculum:
+  # Reward threshold to advance difficulty level
+  advancement_threshold: 0.85
+  # Evaluation window (episodes)
+  evaluation_window: 50
+
+  levels:
+    1:
+      wind_sustained_m_s: 0.0
+      wind_gust_m_s: 5.0
+      obstacle_density: 0.1
+      jnr_max_db: 5.0
+    2:
+      wind_sustained_m_s: 5.0
+      wind_gust_m_s: 8.0
+      obstacle_density: 0.2
+      jnr_max_db: 10.0
+    3:
+      wind_sustained_m_s: 8.0
+      wind_gust_m_s: 12.0
+      obstacle_density: 0.35
+      jnr_max_db: 15.0
+    4:
+      wind_sustained_m_s: 10.0
+      wind_gust_m_s: 15.0
+      obstacle_density: 0.5
+      jnr_max_db: 20.0
+    5:
+      wind_sustained_m_s: 13.0
+      wind_gust_m_s: 18.0
+      obstacle_density: 0.7
+      jnr_max_db: 35.0
+
+# Adversarial hunter drones (§4.4)
+adversarial:
+  hunter_velocity_advantage: 1.20   # V_hunter = 1.2 × V_target
+  navigation_constant: 3.0          # N' in TPN guidance law (§4.4)
+  hunter_fov_deg: 75.0              # Forward-only camera FOV
+  primary_lidar_range_m: 50.0
+  hunter_camera_range_m: 25.0       # R_L / R_C = 2 → survival advantage
+
+# Neural heatmap projection (§4.5)
+heatmap:
+  source_layer: 1          # Second FC layer (index 1), 64 neurons
+  grid_resolution_m: 5.0   # Spatial resolution of projected heatmap
+  decay_rate: 0.95          # Per-frame activation decay

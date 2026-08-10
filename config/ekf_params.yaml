@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# CellHawk EKF Parameters
+# Reference: §3.4, Appendix A
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Navigation tier JNR thresholds (dB)
+tier_thresholds:
+  tier1_to_tier2_db: 6.0    # GPS degraded; conservative early handover
+  tier2_to_tier3_db: 19.0   # Cellular overwhelmed (~79× noise power)
+
+# EKF update rate (Hz) — matches SDR sampling rate
+update_rate_hz: 10
+
+# Initial state covariance diagonal [east, north, up, ve, vn, vu, hdg, jnr, bias_z]
+# Units: m², m²/s², rad², dB², m²/s⁴
+initial_covariance_diagonal:
+  - 100.0   # east position variance (10 m 1σ)
+  - 100.0   # north position variance
+  - 25.0    # up position variance (5 m 1σ)
+  - 1.0     # east velocity variance (1 m/s 1σ)
+  - 1.0     # north velocity variance
+  - 0.25    # up velocity variance
+  - 0.1     # heading variance (~18° 1σ)
+  - 4.0     # JNR variance (2 dB 1σ)
+  - 0.01    # accel bias variance
+
+# Process noise spectral densities (continuous-time)
+process_noise:
+  position_m2_per_s:    0.01   # IMU integration noise
+  velocity_m2_per_s3:   0.1    # Acceleration noise
+  heading_rad2_per_s:   0.001  # Yaw rate noise
+  jnr_db2_per_s:        1.0    # JNR random walk
+  bias_m2_per_s5:       1e-6   # Accelerometer bias drift
+
+# Measurement noise (per tier)
+measurement_noise:
+  gnss_position_m:      4.5    # Tier 1 RMS (§5.3)
+  cellular_position_m:  42.0   # Tier 2 RMS favourable (§5.3)
+  slam_velocity_m_per_s: 0.5   # Tier 3 velocity measurement noise
+
+# Innovation gate: reject measurements with Mahalanobis distance > threshold
+innovation_gate_sigma: 3.0
+
+# Huber loss threshold for robust M-estimation (§3.3)
+huber_threshold_sigma: 1.5
+
+# Smooth handover: sigmoid ramp over N EKF cycles (§3.4)
+handover_ramp_cycles: 5
+
+# Spoofing detection: RSSI cross-check residual threshold (m)
+spoofing_detection_threshold_m: 150.0
